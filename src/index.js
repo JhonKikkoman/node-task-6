@@ -34,7 +34,7 @@ app.get('/api/books/:id', (req, res) => {
   }
 });
 
-app.post('/api/user/login', (req, res) => {
+app.post('/api/books', (req, res) => {
   const { title } = req.body;
   if (!title) {
     res.status(404);
@@ -45,6 +45,17 @@ app.post('/api/user/login', (req, res) => {
   res.status = 201;
   res.json(newBook);
 });
+
+app.post('/api/user/login', (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(404);
+    res.json('404 Укажите корректно почту');
+  }
+  res.status(201);
+  res.json({ id: 1, mail: `${email}` });
+});
+
 app.put('/api/books/:id', (req, res) => {
   const { title } = req.body;
   const { id } = req.params;
