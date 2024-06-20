@@ -1,5 +1,7 @@
 /** @format */
 
+const dir = __dirname;
+module.exports = dir;
 const express = require('express');
 
 const err404 = require('./middleware/err404');
