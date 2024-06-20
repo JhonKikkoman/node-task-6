@@ -1,92 +1,31 @@
 /** @format */
 
 const express = require('express');
-const { v4: uuidv4 } = require('uuid');
 
-class Book {
-  constructor(title) {
-    this.id = uuidv4();
-    this.title = title;
-    this.description = '';
-    this.authors = '';
-    this.favorite = '';
-    this.fileCover = '';
-    this.fileName = '';
-  }
-}
+const err404 = require('./middleware/err404');
+const logger = require('./middleware/logger');
 
-const books = [new Book('Anna'), new Book('Jhon Wick')];
+const booksRouter = require('./routes/booksRoute');
+const getBookId = require('./routes/getBookRoute');
+const postBook = require('./routes/postBookRoute');
+const login = require('./routes/loginRoute');
+const updateBook = require('./routes/updateBookRoute');
+const deleteBook = require('./routes/deleteBookRoute');
+const upload = require('./routes/uploadImgRoute');
+const download = require('./routes/dowloadRoute');
+
 const app = express();
-app.use(express.json());
 
-app.get('/api/books', (req, res) => {
-  res.json(books);
-});
-app.get('/api/books/:id', (req, res) => {
-  const { id } = req.params;
-  const bookIndx = books.findIndex((elem) => elem.id === id);
-
-  if (bookIndx !== -1) {
-    res.json(books[bookIndx]);
-  } else {
-    res.status(404);
-    res.json('404 Страница не найдена ');
-  }
-});
-
-app.post('/api/books', (req, res) => {
-  const { title } = req.body;
-  if (!title) {
-    res.status(404);
-    res.json('404 Не удалось добавить книгу без названия');
-  }
-  const newBook = new Book(title);
-  books.push(newBook);
-  res.status = 201;
-  res.json(newBook);
-});
-
-app.post('/api/user/login', (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    res.status(404);
-    res.json('404 Укажите корректно почту');
-  }
-  res.status(201);
-  res.json({ id: 1, mail: `${email}` });
-});
-
-app.put('/api/books/:id', (req, res) => {
-  const { title } = req.body;
-  const { id } = req.params;
-  const bookIndx = books.findIndex((elem) => elem.id === id);
-  if (!title) {
-    res.status(404);
-    res.json('404 Не удалось обновить книгу без названия');
-  }
-  if (bookIndx !== -1) {
-    books[bookIndx] = {
-      ...books[bookIndx],
-      title,
-    };
-    res.json(books);
-  } else {
-    res.status(404);
-    res.json('404 Страница не найдена');
-  }
-});
-
-app.delete('/api/books/:id', (req, res) => {
-  const id = req.params;
-  const bookIndx = books.findIndex((elem) => elem.id == id);
-  if (bookIndx !== -1) {
-    books.splice(bookIndx, 1);
-    res.json(true);
-  } else {
-    res.status(404);
-    res.json('404 Страница не найдена');
-  }
-});
+app.use(logger); // этот middleware должен быть в начале т.к. Express выбирает первый совпавший маршрут.
+app.use('/upload/book/:id', upload); // роут с middleware для загрузки пути к книге по ID в свойстве fileBook
+app.use('/books/:id/download', download); // загрузка книги
+app.use('/books', booksRouter); // получить все книги
+app.use('/books/:id', getBookId); // получить одну книгу по ID
+app.use('/books', postBook); // добавить книгу
+app.use('/user/login', login); // логин
+app.use('/books/:id', updateBook); // обновить книгу по ID
+app.use('/books/:id', deleteBook); // удалить книгу
+app.use(err404); // middleware для обработки не существующих роутов
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT);
