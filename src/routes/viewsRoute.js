@@ -2,10 +2,9 @@
 
 const express = require('express');
 const router = express.Router();
-const data = require('../data/data');
 
-router.get('/api', (req, res) => {
-  res.json(data);
+router.get('/', (req, res) => {
+  res.render('index');
 });
 
 module.exports = router;

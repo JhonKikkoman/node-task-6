@@ -3,7 +3,7 @@
 const fs = require('node:fs');
 const os = require('node:os');
 
-module.exports = (req, res) => {
+module.exports = (req, res, next) => {
   const date = new Date();
   const { url, method } = req;
   fs.appendFile(
@@ -15,4 +15,5 @@ module.exports = (req, res) => {
       }
     }
   );
+  next();
 };
