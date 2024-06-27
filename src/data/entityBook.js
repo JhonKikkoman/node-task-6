@@ -3,10 +3,10 @@
 const { v4: uuidv4 } = require('uuid');
 
 module.exports = class Book {
-  constructor(title) {
+  constructor(title, desc) {
     this.id = uuidv4();
     this.title = title;
-    this.description = '';
+    this.description = desc;
     this.authors = '';
     this.favorite = false;
     this.fileCover = '';
