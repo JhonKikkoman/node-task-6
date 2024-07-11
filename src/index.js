@@ -9,6 +9,7 @@ const logger = require('./middleware/logger');
 
 const booksRouter = require('./routes/book');
 const viewsRouter = require('./routes/viewsRoute');
+const counterRouter = require('./routes/counter');
 
 const app = express();
 app.use(express.json());
@@ -22,6 +23,8 @@ app.set('view engine', 'ejs');
 app.use('/api', booksRouter);
 
 app.use('/index', viewsRouter);
+
+app.use('/counter', counterRouter);
 
 app.use(err404);
 

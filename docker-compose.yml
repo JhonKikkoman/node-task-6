@@ -1,0 +1,19 @@
+services:
+  storage:
+    image: redis
+    volumes:
+      - ./redis/data:/data
+
+  library:
+    image: jhonkikkoman/library:v1.0.0
+    working_dir: /my-app
+    volumes: 
+      - ./:/my-app
+    ports:
+      - 3000:3000
+    environment:
+      - PORT=3000
+      - REDIS_URL=redis://storage
+    command: npm run dev
+    depends_on:
+      - storage
