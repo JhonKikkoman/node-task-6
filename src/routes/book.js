@@ -3,39 +3,46 @@
 const express = require('express');
 const fileMulter = require('../middleware/uploadFile');
 const router = express.Router();
-const data = require('../data/data');
-const Book = require('../data/entityBook');
 const dir = require('../index');
+const bookSchema = require('../models/books');
 
 // все книги
-router.get('/books', (req, res) => {
-  res.json(data);
+router.get('/books', async (req, res) => {
+  try {
+    const books = await bookSchema.find().select('-__v');
+    res.json(books);
+  } catch (e) {
+    res.status(500);
+    res.json(e);
+  }
 });
 
 // книга по ID
-router.get('/book/:id', (req, res) => {
+router.get('/book/:id', async (req, res) => {
   const { id } = req.params;
-  const bookIndx = data.findIndex((elem) => elem.id === id);
-
-  if (bookIndx !== -1) {
-    res.json(data[bookIndx]);
-  } else {
-    res.status(404);
-    res.json('404 Страница не найдена ');
+  try {
+    const book = await bookSchema.findById(id).select('-__v');
+    res.json(book);
+  } catch (e) {
+    res.status(500);
+    res.json(e);
   }
 });
 
 // создать(добавить) книгу
-router.post('/addBook', (req, res) => {
-  const { title } = req.body;
-  if (!title) {
-    res.status(404);
-    res.json('404 Не удалось добавить книгу без названия');
+router.post('/addBook', async (req, res) => {
+  const { title, description } = req.body;
+  const newBook = new bookSchema({
+    title,
+    description,
+  });
+  try {
+    await newBook.save();
+    res.json(newBook);
+  } catch (e) {
+    res.status(500);
+    res.json(e);
   }
-  const newBook = new Book(title);
-  data.push(newBook);
-  res.status = 201;
-  res.json(newBook);
 });
 
 // логин
@@ -50,36 +57,27 @@ router.post('/login', (req, res) => {
 });
 
 // обновить книгу
-router.put('/updateBook/:id', (req, res) => {
-  const { title } = req.body;
+router.put('/updateBook/:id', async (req, res) => {
+  const { title, description } = req.body;
   const { id } = req.params;
-  const bookIndx = data.findIndex((elem) => elem.id === id);
-  if (!title) {
-    res.status(404);
-    res.json('404 Не удалось обновить книгу без названия');
-  }
-  if (bookIndx !== -1) {
-    data[bookIndx] = {
-      ...data[bookIndx],
-      title,
-    };
-    res.json(data);
-  } else {
-    res.status(404);
-    res.json('404 Страница не найдена');
+  try {
+    await bookSchema.findByIdAndUpdate(id, { title, description });
+    res.redirect(`http://localhost:3000/index/${id}`);
+  } catch (e) {
+    res.json(500);
+    res.json(e);
   }
 });
 
 // удалить книгу
-router.delete('/deleteBook/:id', (req, res) => {
+router.delete('/deleteBook/:id', async (req, res) => {
   const { id } = req.params;
-  const bookIndx = data.findIndex((elem) => elem.id === id);
-  if (bookIndx !== -1) {
-    data.splice(bookIndx, 1);
+  try {
+    await bookSchema.deleteOne({ _id: id });
     res.json(true);
-  } else {
-    res.status(404);
-    res.json('404 Страница не найдена1');
+  } catch (e) {
+    res.status(500);
+    res.json(e);
   }
 });
 
