@@ -22,6 +22,9 @@ router.get('/book/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const book = await bookSchema.findById(id).select('-__v');
+    if (book === null) {
+      res.json('Code: 404');
+    }
     res.json(book);
   } catch (e) {
     res.status(500);
@@ -61,7 +64,10 @@ router.put('/updateBook/:id', async (req, res) => {
   const { title, description } = req.body;
   const { id } = req.params;
   try {
-    await bookSchema.findByIdAndUpdate(id, { title, description });
+    const book = await bookSchema.findByIdAndUpdate(id, { title, description });
+    if (book === null) {
+      res.json('Code: 404');
+    }
     res.redirect(`http://localhost:3000/index/${id}`);
   } catch (e) {
     res.json(500);
