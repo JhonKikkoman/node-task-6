@@ -1,0 +1,33 @@
+
+<%- include('../includ/layout-start')%>
+
+<main>
+    <div class="container-md flex-column gap-3 d-flex align-items-center min-vh-100 justify-content-center  w-25 p-3 m-auto" style="gap: 10px">
+        <p class="h3">Authorization</p>
+        <form action="/login" method="post">
+        <div class="container-sm d-flex flex-column" style="gap: 10px">
+            <div class="d-flex justify-content-between">
+            <div class="col-auto">
+              <label for="inputName" class="col-form-label">Name</label>
+            </div>
+            <div class="col-auto">
+              <input type="text" id="inputName" name="username" class="form-control" aria-describedby="nameHelpInline">
+            </div>
+          </div>
+          <div class="d-flex justify-content-between">
+            <div class="col-auto">
+              <label for="inputPassword6" class="col-form-label">Password</label>
+            </div>
+            <div class="col-auto">
+              <input type="password" id="inputPassword6" name="password" class="form-control" aria-describedby="passwordHelpInline">
+            </div>
+          </div>
+          <div class="container-sm d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+</main>
+
+<%- include('../includ/layout-end')%>

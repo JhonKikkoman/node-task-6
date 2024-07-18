@@ -1,0 +1,21 @@
+
+<%- include('../includ/layout-start')%>
+
+<main>
+    <h3>Profile - <%= user.username %></h3>
+    <ul class="list-unstyled">
+        <li>ID: <%= user.id %></li>
+        <li>Username: <%= user.username %></li>
+        <li>Name: <%= user.displayName %></li>
+        <% if (user.emails) { %>
+            <li>Email: <%= user.emails[0].value %></li>
+        <% } %>
+        </ul>
+    <p class="h6">
+        <form  action="/index/logout" class="d-flex" role="search">
+            <button class="btn btn-outline-primary" type="submit">Exit</button>
+        </form>
+    </p>
+</main>
+
+<%- include('../includ/layout-end')%>

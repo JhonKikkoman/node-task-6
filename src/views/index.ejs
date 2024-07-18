@@ -2,7 +2,19 @@
 <%- include('./includ/layout-start')%>
 
 <main>
-    <p class="h1" style="padding: 5px">Library</p>
+  <nav class="navbar bg-body-tertiary">
+    <div class="container-fluid d-flex">
+      <p class="h2"><a href="/index" class="navbar-brand">Library</a></p>
+      <div class="container d-flex justify-content-end" style="gap: 10px;">
+        <form  action="/index/profile" class="d-flex" role="search">
+          <button class="btn btn-outline-info" type="submit">Profile</button>
+        </form>
+        <form  action="/index/logout" class="d-flex" role="search">
+          <button class="btn btn-outline-danger" type="submit">Exit</button>
+        </form>
+      </div>
+    </div>
+  </nav>
     <div class="container text-right" >
         <a href="index/create"><button type="button" class="btn btn-primary">Create book</button></a>
     </div>

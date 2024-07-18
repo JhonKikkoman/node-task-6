@@ -1,0 +1,18 @@
+
+<%- include('../includ/layout-start')%>
+
+<main>
+    <div class="container-md flex-column gap-3 d-flex align-items-center min-vh-100 justify-content-center  w-25 p-3 m-auto" style="gap: 10px">
+        <% if (!user) { %>
+            <p class="h4">Главная</p> 
+            <p class="h6">Пожалуйста , <a class="link-warning" href="/login"> авторизуйтесь </a>
+        <% } else { %>
+            <p class="h4">Привет, <%= user.username %>. </p>
+            <p class="h6">Перейти в <a href="/profile">профиль</a>.</p>
+        <% } %>
+
+    </div>
+</main>
+
+
+<%- include('../includ/layout-end')%>
