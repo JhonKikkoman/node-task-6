@@ -6,6 +6,8 @@ const express = require('express');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const http = require('http');
+const socketIO = require('socket.io');
 
 const err404 = require('./middleware/err404');
 const logger = require('./middleware/logger');
@@ -16,6 +18,8 @@ const counterRouter = require('./routes/counter');
 const authRouter = require('./routes/auth');
 
 const app = express();
+const server = http.Server(app);
+const io = socketIO(server);
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(session({ secret: 'SECRET' }));
@@ -27,6 +31,31 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // app.use('/', logger);
+
+io.on('connection', (stream) => {
+  const { id } = stream;
+  console.log(`Socket id - ${id}`);
+  stream.on('message-me', (msg) => {
+    msg.type = 'me';
+    stream.emit('message-me', msg);
+  });
+  stream.on('message-all', (msg) => {
+    msg.type = 'all';
+    stream.broadcast.emit('message-all', msg);
+    stream.emit('message-all', msg);
+  });
+  const { roomName } = stream.handshake.query;
+  console.log(`Socket room - ${roomName}`);
+  stream.join(roomName);
+  stream.on('message-room', (msg) => {
+    msg.type = `room: ${roomName}`;
+    stream.to(roomName).emit('message-all', msg);
+    stream.emit('message-all', msg);
+  });
+  stream.on('disconnect', () => {
+    console.log(`Socket disconnected: ${id}`);
+  });
+});
 
 app.use('/', authRouter);
 
