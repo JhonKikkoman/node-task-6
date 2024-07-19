@@ -8,8 +8,8 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
     crossorigin="anonymous">
-    <script src="/socket.io/socket.io.js"></script>
     <title>Socket.IO</title>
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
 </head>
 <body>
 
@@ -56,7 +56,8 @@
         <button type="submit" id="send-room" class="btn btn-primary">room</button>
     </div>
 </main>
-<script src="../../index.js">
+<script src="https://cdn.socket.io/3.1.1/socket.io.min.js"></script>
+<script>
     const roomName = location.pathname.split('/').pop();
     const socket = io.connect('/', {query: `roomName=${roomName}`});
 

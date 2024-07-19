@@ -6,6 +6,7 @@ const express = require('express');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const path = require('path');
 const http = require('http');
 const socketIO = require('socket.io');
 
@@ -20,6 +21,7 @@ const authRouter = require('./routes/auth');
 const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
+
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(session({ secret: 'SECRET' }));
