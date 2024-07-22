@@ -7,8 +7,8 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const path = require('path');
-const http = require('http');
-const socketIO = require('socket.io');
+const http = require('http'); // проверить с createServer
+const socketIO = require('socket.io'); // проверить с Server
 
 const err404 = require('./middleware/err404');
 const logger = require('./middleware/logger');
@@ -76,7 +76,8 @@ async function start(PORT) {
         dbName: 'books',
       })
       .then(() => console.log('-----------Connected to DB-----------'));
-    app.listen(PORT, () => {
+    // вот тут ошибка воможно нужно слушать server а я слушая app, который не подключён к socket.io
+    server.listen(PORT, () => {
       console.log('server stared on http://localhost:' + PORT);
     });
   } catch (e) {
