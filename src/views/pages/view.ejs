@@ -9,7 +9,6 @@
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
     crossorigin="anonymous">
     <title>Socket.IO</title>
-    <!-- <script src="/socket.io/socket.io.js"></script> -->
 </head>
 <body>
 
@@ -22,7 +21,7 @@
         </div>
     </div>
     <div class="container-md d-flex justify-content-between mt-5 ml-5 mr-5 mb-5">
-        <div class="container-md d-flex flex-column">
+        <div class="container-md d-flex flex-column align-items-center">
             <p class="h3">Comments</p>
             <div class="row">
                 <div class="col-4">
@@ -70,14 +69,22 @@
 
     const getTmp = (msg) => {
         return `
-                <div class="list-group-item list-group-item-action">
-                    <div class="d-flex w-100 justify-content-between">
-                        <small>${msg.username}</small>
-                        <small class="text-muted">${msg.type}</small>
+                <div class="d-inline-flex p-2 flex-fill flex-column">
+                    <div class="container">
+                        <p class="h5">${msg.userName}</p>
                     </div>
-                    <p class="mb-1">${msg.text}</p>
+                    <p class="h6">${msg.text}</p>
                 </div>
         `;
+    }
+
+    function buttonListener (btn, typeMsg) {
+        btn.addEventListener('click',() =>{
+        socket.emit(typeMsg, {
+            userName: userName.value,
+            text: inputText.value
+        });
+    });
     }
 
     socket.on('message-me', (msg) => {
@@ -85,37 +92,21 @@
         boxList.insertAdjacentHTML('beforeend', div);
     });
 
-    sendMe.addEventListener('click',() =>{
-        socket.emit('message-me', {
-            userName: userName.value,
-            text: inputText.value
-        });
-    });
+    buttonListener(sendMe, 'message-me')
 
     socket.on('message-all', (msg)=> {
         const div = getTmp(msg);
         boxList.insertAdjacentHTML('beforeend', div);
     })
 
-    sendAll.addEventListener('click', () =>{
-        socket.emit('message-all', {
-            userName: userName.value,
-            text: inputText.value
-        })
-    });
+    buttonListener(sendAll, 'message-all')
 
     socket.on('message-room', (msg) => {
         const div = getTmp(msg);
         boxList.insertAdjacentHTML('beforeend', div)
     })
 
-    sendRoom.addEventListener('click', () => {
-        socket.emit('message-room', {
-            userName: userName.value,
-            text: inputText.value
-        })
-    })
-
+    buttonListener(sendRoom, 'message-room')
 </script>
 
 <%- include('../includ/layout-end')%>

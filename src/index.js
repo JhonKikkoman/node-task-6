@@ -7,8 +7,8 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const path = require('path');
-const http = require('http'); // проверить с createServer
-const socketIO = require('socket.io'); // проверить с Server
+const http = require('http');
+const socketIO = require('socket.io');
 
 const err404 = require('./middleware/err404');
 const logger = require('./middleware/logger');
@@ -36,7 +36,6 @@ app.use(passport.session());
 
 io.on('connection', (stream) => {
   const { id } = stream;
-  console.log(`Socket id - ${id}`);
   stream.on('message-me', (msg) => {
     msg.type = 'me';
     stream.emit('message-me', msg);
@@ -46,8 +45,8 @@ io.on('connection', (stream) => {
     stream.broadcast.emit('message-all', msg);
     stream.emit('message-all', msg);
   });
+
   const { roomName } = stream.handshake.query;
-  console.log(`Socket room - ${roomName}`);
   stream.join(roomName);
   stream.on('message-room', (msg) => {
     msg.type = `room: ${roomName}`;
@@ -76,7 +75,6 @@ async function start(PORT) {
         dbName: 'books',
       })
       .then(() => console.log('-----------Connected to DB-----------'));
-    // вот тут ошибка воможно нужно слушать server а я слушая app, который не подключён к socket.io
     server.listen(PORT, () => {
       console.log('server stared on http://localhost:' + PORT);
     });
