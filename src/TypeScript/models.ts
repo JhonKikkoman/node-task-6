@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 interface entityBook {
     id: string,
     title: string,
@@ -9,9 +10,7 @@ interface entityBook {
 }
 
 abstract class BooksRepository {
-    constructor() {
-        
-    }
+
     createBook(book:string){};
     getBook(id: string){};
     getBooks(){};

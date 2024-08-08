@@ -3,7 +3,6 @@
 const express = require('express');
 const fileMulter = require('../middleware/uploadFile');
 const router = express.Router();
-const dir = require('../index');
 const bookSchema = require('../models/books');
 
 // все книги
@@ -48,17 +47,6 @@ router.post('/addBook', async (req, res) => {
   }
 });
 
-// логин
-router.post('/login', (req, res) => {
-  const { email } = req.body;
-  if (!email) {
-    res.status(404);
-    res.json('404 Укажите корректно почту');
-  }
-  res.status(201);
-  res.json({ id: 1, mail: `${email}` });
-});
-
 // обновить книгу
 router.put('/updateBook/:id', async (req, res) => {
   const { title, description } = req.body;
@@ -88,31 +76,30 @@ router.delete('/deleteBook/:id', async (req, res) => {
 });
 
 // загрузка книги на сервер
-router.post('/uploadBook/:id', fileMulter.single('book'), (req, res) => {
+router.post('/uploadBook/:id', fileMulter.single('book'), async (req, res) => {
   const { id } = req.params;
-  const bookIndx = data.findIndex((el) => el.id === id);
-  if (req.file && bookIndx !== -1) {
-    const { path } = req.file;
-    data[bookIndx].fileBook = path;
-    res.json(data[bookIndx]);
+  const { path } = req.file;
+  try {
+    const book = await bookSchema.findByIdAndUpdate(id, {
+      $set: { fileName: path },
+    });
+    res.status(201);
+    res.json(book);
+  } catch (e) {
+    res.status(500);
+    res.json(e);
   }
-  res.json();
 });
 
 // загрузка книги на клиент
-router.get('/downloadBook/:id', (req, res) => {
+router.get('/downloadBook/:id', async (req, res) => {
   const { id } = req.params;
-  const bookIndx = data.findIndex((el) => el.id === id);
-  if (bookIndx !== -1) {
-    res.status(200);
-    res.download(`${dir}\/${data[bookIndx].fileBook}`, (err) => {
-      if (err) {
-        throw new Error(err);
-      }
-    });
-  } else {
-    res.status(404);
-    res.json('404 Страница не найдена1');
+  try {
+    const book = await bookSchema.findById(id).select('-__v');
+    res.download(book.fileName);
+  } catch (e) {
+    res.status(500);
+    res.json(e);
   }
 });
 

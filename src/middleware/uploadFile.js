@@ -1,13 +1,20 @@
 /** @format */
 
 const multer = require('multer');
+const path = require('path');
+const { existsSync, mkdirSync } = require('fs');
 
 const storage = multer.diskStorage({
   destination(req, file, clbk) {
-    clbk(null, 'public/books');
+    const absolutePath = path.join(__dirname, '../public/books');
+    if (!existsSync(absolutePath)) {
+      mkdirSync(absolutePath, { recursive: true });
+    }
+    clbk(null, absolutePath);
   },
   filename(req, file, clbk) {
-    clbk(null, `${Date.now()}-${file.originalname}`);
+    const uniqKey = Math.random().toString(32).substring(2);
+    clbk(null, `${uniqKey}-${file.originalname}`);
   },
 });
 

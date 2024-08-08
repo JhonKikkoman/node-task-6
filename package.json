@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc --project  ./tsconfig.json --watch",
+    "eslint": "eslint --cache src",
+    "eslint:dump": "eslint --print-config ./eslint.config.mjs",
     "start": "pm2 start src/index.js --watch --ignore-watch=\"node_modules\"",
     "del": "pm2 delete src/index.js",
     "dev": "nodemon src/index.js",
@@ -26,7 +29,14 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.8.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.1",
+    "@typescript-eslint/parser": "^8.0.1",
     "dotenv": "^16.4.5",
-    "nodemon": "^3.1.3"
+    "eslint": "^9.8.0",
+    "globals": "^15.9.0",
+    "nodemon": "^3.1.3",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.0.1"
   }
 }

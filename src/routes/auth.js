@@ -63,7 +63,7 @@ router.post(
 );
 
 router.get('/index/logout', (req, res) => {
-  req.session.destroy((error) => {
+  req.logout(() => {
     res.redirect('/');
   });
 });

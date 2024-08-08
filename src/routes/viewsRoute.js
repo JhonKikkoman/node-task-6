@@ -67,7 +67,7 @@ router.post('/edit/:id', async (req, res) => {
   try {
     await bookSchema.findByIdAndUpdate(id, { title, description });
     res.redirect('/index');
-  } catch (error) {
+  } catch (e) {
     res.status(500);
     res.json(e);
   }
