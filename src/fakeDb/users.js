@@ -1,5 +1,7 @@
 /** @format */
 
+import process from 'process';
+
 const records = [
   {
     id: 1,
@@ -10,7 +12,7 @@ const records = [
   },
 ];
 
-exports.findById = (id, clbk) => {
+export function findById(id, clbk) {
   process.nextTick(() => {
     const indx = id - 1;
     if (records[indx]) {
@@ -19,9 +21,9 @@ exports.findById = (id, clbk) => {
       throw new Error(`User: ${id} does not exist`);
     }
   });
-};
+}
 
-exports.findByUserName = (username, clbk) => {
+export function findByUserName(username, clbk) {
   process.nextTick(() => {
     for (let i = 0; i < records.length; i++) {
       const user = records[i];
@@ -31,8 +33,8 @@ exports.findByUserName = (username, clbk) => {
       return clbk(null, null);
     }
   });
-};
+}
 
-exports.verifyPassword = (user, password) => {
+export function verifyPassword(user, password) {
   return user.password === password;
-};
+}

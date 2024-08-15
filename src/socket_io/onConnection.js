@@ -1,6 +1,6 @@
 /** @format */
 
-function onConnection(io, socket) {
+export default function onConnection(io, socket) {
   const { id } = socket;
   socket.on('message-me', (msg) => {
     msg.type = 'me';
@@ -23,5 +23,3 @@ function onConnection(io, socket) {
     console.log(`Socket disconnected: ${id}`);
   });
 }
-
-module.exports = onConnection;

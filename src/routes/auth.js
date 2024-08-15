@@ -1,22 +1,23 @@
 /** @format */
 
-const express = require('express');
-const router = express.Router();
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const fakeDb = require('../fakeDb');
+import { Router } from 'express';
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { findByUserName, verifyPassword, findById } from '../fakeDb/users.js';
+
+const router = Router();
 
 const verify = (username, password, done) => {
-  fakeDb.users.findByUserName(username, (error, user) => {
+  findByUserName(username, (error, user) => {
     if (error) {
-      return done(err);
+      return done(error);
     }
     if (!user) {
       return done(null, false, {
         message: 'User not found',
       });
     }
-    if (!fakeDb.users.verifyPassword(user, password)) {
+    if (!verifyPassword(user, password)) {
       return done(null, false, {
         message: 'Wrong password',
       });
@@ -38,7 +39,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  fakeDb.users.findById(id, (error, user) => {
+  findById(id, (error, user) => {
     if (error) {
       done(error);
     }
@@ -81,4 +82,4 @@ router.get(
   }
 );
 
-module.exports = router;
+export default router;

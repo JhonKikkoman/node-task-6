@@ -1,8 +1,9 @@
 /** @format */
 
-const express = require('express');
-const router = express.Router();
-const bookSchema = require('../models/books');
+import { Router } from 'express';
+import bookSchema from '../models/books.js';
+
+const router = Router();
 
 router.get('/', async (req, res) => {
   try {
@@ -84,4 +85,4 @@ router.post('/delete/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

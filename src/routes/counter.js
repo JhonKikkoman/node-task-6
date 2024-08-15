@@ -1,11 +1,12 @@
 /** @format */
 
-const express = require('express');
-const redis = require('redis');
-const router = express.Router();
+import { Router } from 'express';
+import { createClient } from 'redis';
+import process from 'process';
+const router = Router();
 
 const REDIS_URL = process.env.REDIS_URL || 'localhost';
-const client = redis.createClient({ url: REDIS_URL });
+const client = createClient({ url: REDIS_URL });
 
 (async () => {
   await client.connect();
@@ -30,4 +31,4 @@ router.post('/:bookId/incr', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

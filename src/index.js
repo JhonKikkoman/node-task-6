@@ -1,27 +1,29 @@
 /** @format */
 
-const express = require('express');
-const session = require('express-session');
-const mongoose = require('mongoose');
-const passport = require('passport');
-const http = require('http');
-const socketIO = require('socket.io');
-const onConnection = require('./socket_io/onConnection');
+import { json, urlencoded } from 'express';
+import process from 'process';
+import express from 'express';
+import session from 'express-session';
+import { connect } from 'mongoose';
+import passport from 'passport';
+import { Server } from 'http';
+import { Server as ServerIo } from 'socket.io';
+import onConnection from './socket_io/onConnection.js';
 
-const err404 = require('./middleware/err404');
+import err404 from './middleware/err404.js';
 // const logger = require('./middleware/logger');
 
-const booksRouter = require('./routes/book');
-const viewsRouter = require('./routes/viewsRoute');
-const counterRouter = require('./routes/counter');
-const authRouter = require('./routes/auth');
+import booksRouter from './routes/book.js';
+import viewsRouter from './routes/viewsRoute.js';
+import counterRouter from './routes/counter.js';
+import authRouter from './routes/auth.js';
 
 const app = express();
-const server = http.Server(app);
-const io = socketIO(server);
+const server = Server(app);
+const io = new ServerIo(server);
 
-app.use(express.json());
-app.use(express.urlencoded());
+app.use(json());
+app.use(urlencoded());
 app.use(session({ secret: 'SECRET' }));
 
 app.set('views', './src/views');
@@ -48,11 +50,9 @@ app.use(err404);
 
 async function start(PORT) {
   try {
-    await mongoose
-      .connect('mongodb://ec9aacc37eeb:27017', {
-        dbName: 'books',
-      })
-      .then(() => console.log('-----------Connected to DB-----------'));
+    await connect('mongodb://ec9aacc37eeb:27017', {
+      dbName: 'books',
+    }).then(() => console.log('-----------Connected to DB-----------'));
     server.listen(PORT, () => {
       console.log('server stared on http://localhost:' + PORT);
     });

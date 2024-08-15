@@ -1,9 +1,11 @@
 /** @format */
 
-const express = require('express');
-const fileMulter = require('../middleware/uploadFile');
-const router = express.Router();
-const bookSchema = require('../models/books');
+import { Router } from 'express';
+import upload from '../middleware/uploadFile.js';
+import bookSchema from '../models/books.js';
+import myContainer from '../TypeScript/container.js';
+import { BooksRepository } from '../TypeScript/models.js';
+const router = Router();
 
 // все книги
 router.get('/books', async (req, res) => {
@@ -24,6 +26,19 @@ router.get('/book/:id', async (req, res) => {
     if (book === null) {
       res.json('Code: 404');
     }
+    res.json(book);
+  } catch (e) {
+    res.status(500);
+    res.json(e);
+  }
+});
+
+// IoC контейнер
+router.get('/book/container/:id', async (req, res) => {
+  const { id } = req.params;
+  const repo = myContainer.get(BooksRepository);
+  try {
+    const book = await repo.getBook(id);
     res.json(book);
   } catch (e) {
     res.status(500);
@@ -68,7 +83,7 @@ router.delete('/deleteBook/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await bookSchema.deleteOne({ _id: id });
-    res.json(true);
+    res.json({ book: 'deleted' });
   } catch (e) {
     res.status(500);
     res.json(e);
@@ -76,7 +91,7 @@ router.delete('/deleteBook/:id', async (req, res) => {
 });
 
 // загрузка книги на сервер
-router.post('/uploadBook/:id', fileMulter.single('book'), async (req, res) => {
+router.post('/uploadBook/:id', upload.single('book'), async (req, res) => {
   const { id } = req.params;
   const { path } = req.file;
   try {
@@ -103,4 +118,4 @@ router.get('/downloadBook/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

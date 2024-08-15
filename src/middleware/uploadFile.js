@@ -1,14 +1,16 @@
 /** @format */
 
-const multer = require('multer');
-const path = require('path');
-const { existsSync, mkdirSync } = require('fs');
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+
+const absolutePath = path.resolve('./src/public/books');
 
 const storage = multer.diskStorage({
   destination(req, file, clbk) {
-    const absolutePath = path.join(__dirname, '../public/books');
-    if (!existsSync(absolutePath)) {
-      mkdirSync(absolutePath, { recursive: true });
+    if (!fs.existsSync(absolutePath)) {
+      fs.mkdirSync(absolutePath, { recursive: true });
+      console.log(absolutePath);
     }
     clbk(null, absolutePath);
   },
@@ -18,4 +20,4 @@ const storage = multer.diskStorage({
   },
 });
 
-module.exports = multer({ storage });
+export default multer({ storage });

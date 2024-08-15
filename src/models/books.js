@@ -1,6 +1,6 @@
 /** @format */
 
-const { model, Schema } = require('mongoose');
+import { model, Schema } from 'mongoose';
 
 const bookSchema = new Schema({
   id: String,
@@ -18,4 +18,4 @@ const bookSchema = new Schema({
   fileName: String,
 });
 
-module.exports = model('book', bookSchema);
+export default model('book', bookSchema);

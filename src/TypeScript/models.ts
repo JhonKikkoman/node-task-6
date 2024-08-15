@@ -9,9 +9,10 @@ interface entityBook {
     fileName: string
 }
 
-abstract class BooksRepository {
+export abstract class BooksRepository {
 
-    createBook(book:string){};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    createBook(book: any){};
     getBook(id: string){};
     getBooks(){};
     updateBook(id: string){};

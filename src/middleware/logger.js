@@ -1,19 +1,15 @@
 /** @format */
 
-const fs = require('node:fs');
-const os = require('node:os');
+import { appendFile } from 'node:fs';
+import { EOL } from 'node:os';
 
-module.exports = (req, res, next) => {
+export default (req, res, next) => {
   const date = new Date();
   const { url, method } = req;
-  fs.appendFile(
-    'logs/server.log',
-    `${date} + ${url} + ${method}` + os.EOL,
-    (err) => {
-      if (err) {
-        throw new Error(err);
-      }
+  appendFile('logs/server.log', `${date} + ${url} + ${method}` + EOL, (err) => {
+    if (err) {
+      throw new Error(err);
     }
-  );
+  });
   next();
 };
