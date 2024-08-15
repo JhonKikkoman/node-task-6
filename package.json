@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "tsc --project  ./tsconfig.json --watch",
-    "eslint": "eslint --cache src",
+    "eslint": "eslint src",
     "eslint:dump": "eslint --print-config ./eslint.config.mjs",
     "start": "pm2 start src/index.js --watch --ignore-watch=\"node_modules\"",
     "del": "pm2 delete src/index.js",
@@ -19,14 +20,15 @@
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
+    "inversify": "^6.0.2",
     "mongoose": "^8.5.1",
     "multer": "^1.4.5-lts.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pm2": "^5.4.0",
     "redis": "^4.6.15",
-    "socket.io": "^4.7.5",
-    "uuid": "^10.0.0"
+    "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
