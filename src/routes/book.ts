@@ -1,16 +1,19 @@
 /** @format */
 
-import { Router } from 'express';
-import upload from '../middleware/uploadFile.js';
-import bookSchema from '../models/books.js';
-import myContainer from '../TypeScript/container.js';
-import { BooksRepository } from '../TypeScript/models.js';
+import { Router, Request, Response } from 'express';
+import upload from '../middleware/uploadFile';
+import bookSchema from '../models/bookSchema';
+import myContainer from '../models/inversify.config';
+import { BooksRepository } from '../models/enities';
+import { TYPES } from '../models/types';
+
 const router = Router();
+const repo: BooksRepository = myContainer.get<BooksRepository>(TYPES.Book);
 
 // все книги
 router.get('/books', async (req, res) => {
   try {
-    const books = await bookSchema.find().select('-__v');
+    const books = await repo.getBooks();
     res.json(books);
   } catch (e) {
     res.status(500);
@@ -21,22 +24,6 @@ router.get('/books', async (req, res) => {
 // книга по ID
 router.get('/book/:id', async (req, res) => {
   const { id } = req.params;
-  try {
-    const book = await bookSchema.findById(id).select('-__v');
-    if (book === null) {
-      res.json('Code: 404');
-    }
-    res.json(book);
-  } catch (e) {
-    res.status(500);
-    res.json(e);
-  }
-});
-
-// IoC контейнер
-router.get('/book/container/:id', async (req, res) => {
-  const { id } = req.params;
-  const repo = myContainer.get(BooksRepository);
   try {
     const book = await repo.getBook(id);
     res.json(book);
@@ -49,13 +36,9 @@ router.get('/book/container/:id', async (req, res) => {
 // создать(добавить) книгу
 router.post('/addBook', async (req, res) => {
   const { title, description } = req.body;
-  const newBook = new bookSchema({
-    title,
-    description,
-  });
   try {
-    await newBook.save();
-    res.json(newBook);
+    const book = await repo.createBook(title, description);
+    res.json(book);
   } catch (e) {
     res.status(500);
     res.json(e);
@@ -67,10 +50,7 @@ router.put('/updateBook/:id', async (req, res) => {
   const { title, description } = req.body;
   const { id } = req.params;
   try {
-    const book = await bookSchema.findByIdAndUpdate(id, { title, description });
-    if (book === null) {
-      res.json('Code: 404');
-    }
+    await repo.updateBook(id, title, description);
     res.redirect(`http://localhost:3000/index/${id}`);
   } catch (e) {
     res.json(500);
@@ -82,8 +62,12 @@ router.put('/updateBook/:id', async (req, res) => {
 router.delete('/deleteBook/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    await bookSchema.deleteOne({ _id: id });
-    res.json({ book: 'deleted' });
+    const isDeleted = await repo.deleteBook(id);
+    if (isDeleted.deletedCount === 1) {
+      res.json({ book: 'deleted' });
+    } else {
+      res.json({ book: 'failed to delete' });
+    }
   } catch (e) {
     res.status(500);
     res.json(e);
@@ -91,20 +75,24 @@ router.delete('/deleteBook/:id', async (req, res) => {
 });
 
 // загрузка книги на сервер
-router.post('/uploadBook/:id', upload.single('book'), async (req, res) => {
-  const { id } = req.params;
-  const { path } = req.file;
-  try {
-    const book = await bookSchema.findByIdAndUpdate(id, {
-      $set: { fileName: path },
-    });
-    res.status(201);
-    res.json(book);
-  } catch (e) {
-    res.status(500);
-    res.json(e);
+router.post(
+  '/uploadBook/:id',
+  upload.single('book'),
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { path } = req.file;
+    try {
+      const book = await bookSchema.findByIdAndUpdate(id, {
+        $set: { fileName: path },
+      });
+      res.status(201);
+      res.json(book);
+    } catch (e) {
+      res.status(500);
+      res.json(e);
+    }
   }
-});
+);
 
 // загрузка книги на клиент
 router.get('/downloadBook/:id', async (req, res) => {

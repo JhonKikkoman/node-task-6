@@ -1,7 +1,7 @@
 /** @format */
 
 import { Router } from 'express';
-import bookSchema from '../models/books.js';
+import bookSchema from '../models/bookSchema';
 
 const router = Router();
 

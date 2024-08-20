@@ -22,8 +22,7 @@ export default [
   {
     rules: {
       semi: ['error', 'always'],
-      // '@typescript-eslint/no-require-imports': 'off',
-      // 'no-undef': ['off'],
+      allowDeclarations: true,
     },
   },
 ];

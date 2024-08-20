@@ -2,12 +2,20 @@
 
 import { Router } from 'express';
 import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
-import { findByUserName, verifyPassword, findById } from '../fakeDb/users.js';
+import { Strategy as LocalStrategy, VerifyFunction} from 'passport-local';
+import { findByUserName, verifyPassword, findById } from '../fakeDb/users';
 
 const router = Router();
 
-const verify = (username, password, done) => {
+declare global {
+  namespace Express {
+      interface User {
+        id: number,
+      }
+  }
+}
+
+const verify: VerifyFunction = (username, password, done) => {
   findByUserName(username, (error, user) => {
     if (error) {
       return done(error);
@@ -34,11 +42,13 @@ passport.use(
   )
 );
 
+
+
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
-passport.deserializeUser((id, done) => {
+passport.deserializeUser((id: number, done) => {
   findById(id, (error, user) => {
     if (error) {
       done(error);
